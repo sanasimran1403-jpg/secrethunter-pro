@@ -1,0 +1,45 @@
+package com.sanasimran.secrethunter.detectors;
+
+import com.sanasimran.secrethunter.model.SecretMatch;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class EntropyAnalyzerTest {
+
+    private final EntropyAnalyzer analyzer = new EntropyAnalyzer();
+
+    @Test
+    void flagsHighEntropyRandomString() {
+        String content = "random_token = \"x7Kj9mPqR2vN8wYzT4bL6cF1hD3sA5gE\"";
+        List<SecretMatch> matches = analyzer.scan(content);
+
+        assertFalse(matches.isEmpty(), "High-entropy random string should be flagged");
+    }
+
+    @Test
+    void doesNotFlagLowEntropyRepeatedString() {
+        String content = "value = \"aaaaaaaaaaaaaaaaaaaaaaaaaa\"";
+        List<SecretMatch> matches = analyzer.scan(content);
+
+        assertTrue(matches.isEmpty(), "Repeated character string has low entropy and should not be flagged");
+    }
+
+    @Test
+    void doesNotFlagShortStrings() {
+        String content = "value = \"abc123\""; // below MIN_LENGTH threshold
+        List<SecretMatch> matches = analyzer.scan(content);
+
+        assertTrue(matches.isEmpty(), "Short strings below minimum length should not be flagged");
+    }
+
+    @Test
+    void doesNotFlagPlainEnglishSentence() {
+        String content = "message = \"This is a normal readable sentence about testing\"";
+        List<SecretMatch> matches = analyzer.scan(content);
+
+        assertTrue(matches.isEmpty(), "Plain English text has lower entropy due to repeated common letters/spaces");
+    }
+}
