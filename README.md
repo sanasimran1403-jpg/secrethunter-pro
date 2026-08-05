@@ -122,6 +122,8 @@ No match found in default wordlist (15 entries).
 
 **Config logic:** the Settings tab lets you add a name + Java regex + severity for any project-specific secret format (e.g. an internal employee ID scheme). Patterns are validated on add (`Pattern.compile` inside a try/catch) and immediately picked up by the passive scanner — no rebuild or reload required.
 
+> A sample HTML report is included at [`samples/sample-report.html`](samples/sample-report.html) — open it directly in a browser to see the S&S-branded output without running the extension.
+
 **Result:**
 
 ```
